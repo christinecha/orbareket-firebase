@@ -7,7 +7,7 @@ GLOBAL
 	box-shadow:none;
 }
 
-body { font-family: 'Montserrat', sans-serif; }
+body { font-family: 'Montserrat', sans-serif; max-width: 1800px; margin-left: auto; margin-right: auto; }
 h1 { text-transform: uppercase; font-weight: 700; margin: 0; }
 h2 { text-transform: uppercase; font-weight: 700; margin: 0; }
 h3 { margin: 0; font-size: 15px; }
