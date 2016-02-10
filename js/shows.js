@@ -20,7 +20,7 @@ ref.child("shows").once("value", function (snapshot) {
     slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 800,
+        breakpoint: 900,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1
@@ -51,7 +51,7 @@ function displayShow(title, starttime, endtime, venue, artists, link) {
   month = monthShortNames[month];
   let day = starttimeObj.getDate();
   starttimeFormatted = month + ' ' + day;
-  let hours = starttimeObj.getHours() + 3
+  let hours = starttimeObj.getHours() + 5
   let minutes = starttimeObj.getMinutes();
   let ampm = hours >= 12 ? 'pm' : 'am';
   hours = hours % 12;
