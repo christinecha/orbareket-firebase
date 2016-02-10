@@ -106,6 +106,7 @@ ref.child('shows').orderByChild('starttime').startAt(currentDate).on('value', (s
 
   snapshot.forEach((childSnapshot) => {
     let show = childSnapshot.val()
+    console.log(show)
 
     let $show_title = $('<input>')
       .addClass('new-show__title')

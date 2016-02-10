@@ -1,69 +1,86 @@
-$(document).ready(function() {
-  // 2. Create a Firebase reference.
-  var myShows = new Firebase('https://orbareket.firebaseio.com/shows');
+"use strict"
 
-  $('#showSubmit').click(function(e){
-    var showDateTime = $('#showDateTime').val();
-    var showVenue = $('#showVenue').val();
-    var showTitle = $('#showTitle').val();
-    var showArtists = $('#showArtists').val();
-    var showLink = $('#showLink').val();
-    var prefix = 'http://';
-    if (showLink.substr(0, prefix.length) !== prefix) {
-      showLink = prefix + showLink;
-    };
+let ref = new Firebase('https://orbareket.firebaseio.com/');
 
-    myShows.push({
-      datetime: showDateTime,
-      venue: showVenue,
-      title: showTitle,
-      artists: showArtists,
-      link: showLink,
-    });
-  });
+ref.child("shows").once("value", function (snapshot) {
+  snapshot.forEach((childSnapshot) => {
+    let show = childSnapshot.val()
+    displayShow(show.title, show.starttime, show.endtime, show.venue, show.artists, show.link)
+  })
 
-  myShows.on("child_added", function (snapshot) {
-    var firebaseValue = snapshot.val();
-    displayShow(firebaseValue.datetime, firebaseValue.venue, firebaseValue.title, firebaseValue.artists, firebaseValue.link);
-  });
+  $('.slideshow').slick({
+    dots: false,
+    infinite: true,
+    speed: 300,
+    arrows: true,
+    appendArrows: $('.slideshow-arrows'),
+    prevArrow: '<button><i class="fa fa-arrow-left"></i></button>',
+    nextArrow: '<button><i class="fa fa-arrow-right"></i></button>',
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 800,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1
+        }
+      },
+      {
+        breakpoint: 550,
+        settings: {
+          arrows: false,
+          dots: false,
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  })
+
+})
 
 
-  // ref.child(key).remove();
+function displayShow(title, starttime, endtime, venue, artists, link) {
+  console.log('meow')
+  let starttimeObj = new Date(starttime * 1000);
+  let starttimeFormatted = ''
 
-  function displayShow(datetime, venue, title, artists, link) {
-    console.log(datetime);
-    var dateObj = new Date(datetime);
-    var month = dateObj.getMonth(); //months from 1-12
-    var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    month = monthShortNames[month];
-    var day = dateObj.getDate();
-    newdate = month + ' ' + day;
-    var hours = dateObj.getHours();
-    var minutes = dateObj.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    artists = artists.replace(/\r?\n/g, '<br />');
+  let month = starttimeObj.getMonth(); //months from 1-12
+  let monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  month = monthShortNames[month];
+  let day = starttimeObj.getDate();
+  starttimeFormatted = month + ' ' + day;
+  let hours = starttimeObj.getHours() + 3
+  let minutes = starttimeObj.getMinutes();
+  let ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  let strTime = hours + ':' + minutes + ' ' + ampm;
 
-    var $date = $('<h2>').text(newdate).addClass('showDate');
-    var $venue = $('<h3>').text(venue).addClass('showVenue');
-    var $title = $('<p>').text(title).addClass('showTitle');
-    var $time = $('<p>').text(strTime).addClass('showTime');
-    var $artists = $('<p>').html(artists).addClass('showArtists');
-    var $link = $('<button>').text('RSVP').attr('href', link).addClass('default1');
+  let $date = $('<h2>').text(starttimeFormatted).addClass('showDate');
+  let $venue = $('<h3>').text(venue).addClass('showVenue');
+  let $title = $('<p>').text(title).addClass('showTitle');
+  let $time = $('<p>').text(strTime).addClass('showTime');
+  let $artists = artists.map((artist, i) => {
+    return $('<p>').html(artist.artist + ' on ' + artist.instrument).addClass('showArtists')
+  })
+  let $link = $('<button>').text('RSVP').attr('href.child("shows")', link).addClass('default1');
 
-    var $showInfo = $('<div>').addClass('showInfo').append($date).append($venue).append($title).append($time).append('<br>').append($artists);
-    if (link) {
-      $showInfo = $showInfo.append($link);
-    };
-    var $slide = $('<div>').addClass('slide col-sm-3').append($showInfo);
-
-    $('.slideshow').append($slide);
+  let $showInfo = $('<div>').addClass('showInfo')
+  .append(
+    $date,
+    $venue,
+    $title,
+    $time,
+    '<br>',
+    $artists
+  )
+  if (link) {
+    $showInfo = $showInfo.append($link);
   };
+  let $slide = $('<div>').append($showInfo);
 
-
-
-
-});
+  $('.slideshow').append($slide);
+}

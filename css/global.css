@@ -7,7 +7,7 @@ GLOBAL
 	box-shadow:none;
 }
 
-body { font-family: 'Montserrat', sans-serif; max-width: 1800px; margin-left: auto; margin-right: auto; }
+body { font-family: 'Montserrat', sans-serif; max-width: 1400px; margin-left: auto; margin-right: auto; }
 h1 { text-transform: uppercase; font-weight: 700; margin: 0; }
 h2 { text-transform: uppercase; font-weight: 700; margin: 0; }
 h3 { margin: 0; font-size: 15px; }
@@ -210,6 +210,7 @@ SHOWS
 	padding: 10px;
 	background-color: #00cadd;
 	border-radius: 10px;
+	border: 5px solid #eee;
 	color: #fff;
   display: inline-block;
   height: 250px;
@@ -236,12 +237,18 @@ SHOWS
 	font-size: 11px;
 }
 
-.showTitle, .showDate {
+.showTitle {
 	display: inline-block;
 }
 
 .slide button {
 	display: inline-block;
+}
+
+.slideshow-arrows button {
+	background-color: #fff;
+	border: none;
+	margin: 5px;
 }
 
 #mailinglist-signup {
