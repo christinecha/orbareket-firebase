@@ -14,18 +14,24 @@ const toLocal = (unix) => {
   return localDate
 }
 
+const displayNotice = (msg) => {
+  $('.notice').fadeIn(200)
+  $('.notice').html(msg)
+  let fadeOut = setTimeout(() => {
+    $('.notice').fadeOut(500)
+  }, 2000)
+}
+
 $('.add-new-show').on('click', (e) => {
   e.preventDefault()
   console.log('hi')
   ref.child('shows').push({
     title: null,
-    starttime: 1456266600,
-    endtime: 1456266600,
+    starttime: toUnix(Date.now()),
+    endtime: toUnix(Date.now()),
     venue: null,
     artists: [{ artist: 'Or Bareket', instrument: 'bass' }]
-  }, () => {
-    $('.notice').html('new show added')
-  })
+  }, displayNotice('new show added'))
 })
 
 $('.shows').on('submit', '.update-show', (e) => {
@@ -54,18 +60,15 @@ $('.shows').on('submit', '.update-show', (e) => {
     endtime: show_endtime,
     venue: show_venue,
     artists: artists
-  }, () => {
-    $('.notice').html('show updated')
-  })
+  }, displayNotice('show updated'))
 })
 
 $('.shows').on('click', '.delete-show', (e) => {
   e.preventDefault()
 
   let show_id = $(e.target).parent().attr('data-key')
-  ref.child('shows').child(show_id).remove(() => {
-    $('.notice').html('show removed')
-  })
+  ref.child('shows').child(show_id).remove(displayNotice('show removed'))
+
 })
 
 $('.shows').on('keyup', '.new-show__starttime', (e) => {
@@ -87,7 +90,11 @@ $('.shows').on('click', '.add-artist-group', (e) => {
     .addClass('new-show__instrument')
     .attr('placeholder', 'instrument')
     .attr('type', 'text')
-  $group.append($artist, $instrument)
+  $group.append(
+    $artist,
+    ' on &nbsp;',
+    $instrument
+  )
   $(e.target).parent().children('.new-show__artists').first().append($group)
 })
 
@@ -122,7 +129,9 @@ ref.child('shows').orderByChild('starttime').startAt(currentDate).on('value', (s
       .attr('placeholder', 'venue')
       .attr('type', 'text')
 
-    let $show_artists = $('<div>').addClass('new-show__artists')
+    let $show_artists = $('<div>')
+      .addClass('new-show__artists')
+      .append('<h5>featuring</h5>')
 
     if (show.artists) {
       $show_artists.append(
@@ -137,7 +146,11 @@ ref.child('shows').orderByChild('starttime').startAt(currentDate).on('value', (s
             .addClass('new-show__instrument')
             .val(data.instrument)
             .attr('type', 'text')
-          $group.append($artist, $instrument)
+          $group.append(
+            $artist,
+            ' on &nbsp;',
+            $instrument
+          )
           return $group
         })
       )
@@ -152,9 +165,9 @@ ref.child('shows').orderByChild('starttime').startAt(currentDate).on('value', (s
         $show_endtime,
         $show_venue,
         $show_artists,
-        '<div class="add-artist-group">+ add another</div>',
+        '<div class="add-artist-group">+ add another artist</div>',
         '<br><button>UPDATE SHOW</button>',
-        '<br><button class="delete-show">DELETE SHOW</button>'
+        '<button class="delete-show">DELETE SHOW</button>'
       )
 
     $('.shows').append($show)
