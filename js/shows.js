@@ -1,8 +1,16 @@
 "use strict"
 
-let ref = new Firebase('https://orbareket.firebaseio.com/');
+let ref = new Firebase('https://orbareket.firebaseio.com/')
 
-ref.child("shows").once("value", function (snapshot) {
+const toUnix = (datetime) => {
+  datetime = new Date(datetime)
+  return Math.round(datetime.getTime() / 1000);
+}
+
+let currentDate = new Date()
+currentDate = toUnix(currentDate)
+
+ref.child("shows").orderByChild('starttime').startAt(currentDate).once("value", function (snapshot) {
   snapshot.forEach((childSnapshot) => {
     let show = childSnapshot.val()
     displayShow(show.title, show.starttime, show.endtime, show.venue, show.artists, show.link)
@@ -42,8 +50,8 @@ ref.child("shows").once("value", function (snapshot) {
 
 
 function displayShow(title, starttime, endtime, venue, artists, link) {
-  console.log('meow')
-  let starttimeObj = new Date(starttime * 1000);
+  let starttimeObj = new Date(starttime * 1000 + 1);
+  console.log(starttimeObj)
   let starttimeFormatted = ''
 
   let month = starttimeObj.getMonth(); //months from 1-12
