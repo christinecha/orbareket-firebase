@@ -48,31 +48,34 @@ ref.child("shows").orderByChild('starttime').startAt(currentDate).once("value", 
 
 })
 
+function formatDateTime(datetime) {
+  let datetimeObj = new Date(datetime * 1000 + 1);
+  let dateFormatted
 
-function displayShow(title, starttime, endtime, venue, artists, link) {
-  let starttimeObj = new Date(starttime * 1000 + 1);
-  console.log(starttimeObj)
-  let starttimeFormatted = ''
-
-  let month = starttimeObj.getMonth(); //months from 1-12
+  let month = datetimeObj.getMonth(); //months from 1-12
   let monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   month = monthShortNames[month];
-  let day = starttimeObj.getDate();
-  starttimeFormatted = month + ' ' + day;
-  let hours = starttimeObj.getHours() + 5
-  let minutes = starttimeObj.getMinutes();
+  let day = datetimeObj.getDate();
+  dateFormatted = month + ' ' + day;
+  let hours = datetimeObj.getHours() + 5
+  let minutes = datetimeObj.getMinutes();
   let ampm = hours >= 12 ? 'pm' : 'am';
   hours = hours % 12;
   hours = hours ? hours : 12; // the hour '0' should be '12'
-  minutes = minutes < 10 ? '0'+minutes : minutes;
+  minutes = minutes < 10 ? '0' + minutes : minutes;
   let strTime = hours + ':' + minutes + ' ' + ampm;
 
-  let $date = $('<h2>').text(starttimeFormatted).addClass('showDate');
-  let $venue = $('<h3>').text(venue).addClass('showVenue');
+  return [dateFormatted, strTime]
+}
+
+
+function displayShow(title, starttime, endtime, venue, artists, link) {
   let $title = $('<p>').text(title).addClass('showTitle');
-  let $time = $('<p>').text(strTime).addClass('showTime');
+  let $venue = $('<h3>').text(venue).addClass('showVenue');
+  let $date = venue.toUpperCase().match("TOUR") ? $('<h2>').text(formatDateTime(starttime)[0] + ' - ' + formatDateTime(endtime)[0]).addClass('showDate') : $('<h2>').text(formatDateTime(starttime)[0]).addClass('showDate');
+  let $time = venue.toUpperCase().match("TOUR") ? '<br>' : $('<p>').text(formatDateTime(starttime)[1]).addClass('showTime');
   let $artists = artists.map((artist, i) => {
-    return $('<p>').html(artist.artist + ' on ' + artist.instrument).addClass('showArtists')
+    return $('<p>').html('<b>' + artist.artist + '</b> : ' + artist.instrument).addClass('showArtists')
   })
   let $link = $('<button>').text('RSVP').attr('href.child("shows")', link).addClass('default1');
 
@@ -88,7 +91,11 @@ function displayShow(title, starttime, endtime, venue, artists, link) {
   if (link) {
     $showInfo = $showInfo.append($link);
   };
+
+
   let $slide = $('<div>').append($showInfo);
+  console.log($showInfo.height())
+    $showInfo.css('padding', ((250 - $showInfo.height) / 2) + 'px')
 
   $('.slideshow').append($slide);
 }

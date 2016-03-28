@@ -207,13 +207,12 @@ SHOWS
 }
 
 .showInfo {
-	padding: 10px;
+	padding: 20px;
 	background-color: #00cadd;
 	border-radius: 10px;
 	border: 5px solid #eee;
 	color: #fff;
   display: inline-block;
-  height: 250px;
 	width: 100%;
 }
 
@@ -233,8 +232,8 @@ SHOWS
 }
 
 .showArtists {
-  text-transform: uppercase;
-	font-size: 11px;
+  text-transform: capitalize;
+	font-size: 12px;
 }
 
 .showTitle {
